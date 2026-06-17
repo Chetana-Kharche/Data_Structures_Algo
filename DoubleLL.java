@@ -1,144 +1,242 @@
-public class DoublyLL {
+import java.util.Scanner;
 
-    class Node {
-        int data;
-        Node next;
-        Node prev;
+class Node {
+    int data;
+    Node next;
+    Node prev;
 
-        Node(int data) {
-            this.data = data;
-            this.next = null;
-            this.prev = null;
+    Node() {
+        data = 0;
+        next = null;
+        prev = null;
+    }
+
+    Node(int d) {
+        data = d;
+        next = null;
+        prev = null;
+    }
+}
+
+class DLL {
+    Node head = null;
+
+    Scanner sc = new Scanner(System.in);
+
+    public void insertStart(int d) {
+        Node nn = new Node(d);
+
+        if (head == null) {
+            head = nn;
+        } else {
+            nn.next = head;
+            head.prev = nn;
+            head = nn;
         }
     }
 
-    Node head;
-    Node tail;
-    int size = 0;
-
-    // Add First
-    public void addFirst(int data) {
-        Node newNode = new Node(data);
-        size++;
+    public void insertEnd(int d) {
+        Node nn = new Node(d);
 
         if (head == null) {
-            head = tail = newNode;
+            head = nn;
+        } else {
+            Node temp = head;
+
+            while (temp.next != null) {
+                temp = temp.next;
+            }
+
+            temp.next = nn;
+            nn.prev = temp;
+        }
+    }
+
+    public void insertBetween(int d) {
+        Node nn = new Node(d);
+
+        if (head == null) {
+            head = nn;
             return;
         }
 
-        newNode.next = head;
-        head.prev = newNode;
-        head = newNode;
-    }
+        Node temp = head;
 
-    // Add Last
-    public void addLast(int data) {
-        Node newNode = new Node(data);
-        size++;
+        System.out.print("Enter key after which you want to insert: ");
+        int key = sc.nextInt();
 
-        if (head == null) {
-            head = tail = newNode;
+        while (temp != null && temp.data != key) {
+            temp = temp.next;
+        }
+
+        if (temp == null) {
+            System.out.println("Key not found");
             return;
         }
 
-        tail.next = newNode;
-        newNode.prev = tail;
-        tail = newNode;
-    }
+        nn.next = temp.next;
+        nn.prev = temp;
 
-    // Remove First
-    public int removeFirst() {
-
-        if (head == null) {
-            System.out.println("DLL is empty");
-            return Integer.MIN_VALUE;
+        if (temp.next != null) {
+            temp.next.prev = nn;
         }
 
-        int val = head.data;
+        temp.next = nn;
+    }
 
-        if (head == tail) {
-            head = tail = null;
-            size = 0;
-            return val;
+    public void deleteStart() {
+        if (head == null) {
+            System.out.println("List is empty");
+            return;
+        }
+
+        if (head.next == null) {
+            head = null;
+            return;
         }
 
         head = head.next;
         head.prev = null;
-
-        size--;
-        return val;
     }
 
-    // Remove Last
-    public int removeLast() {
-
+    public void deleteEnd() {
         if (head == null) {
-            System.out.println("DLL is empty");
-            return Integer.MIN_VALUE;
+            System.out.println("List is empty");
+            return;
         }
 
-        int val = tail.data;
-
-        if (head == tail) {
-            head = tail = null;
-            size = 0;
-            return val;
+        if (head.next == null) {
+            head = null;
+            return;
         }
 
-        tail = tail.prev;
-        tail.next = null;
+        Node temp = head;
 
-        size--;
-        return val;
+        while (temp.next != null) {
+            temp = temp.next;
+        }
+
+        temp.prev.next = null;
     }
 
-    // Print Forward
-    public void print() {
+    public void deleteBetween() {
+        if (head == null) {
+            System.out.println("List is empty");
+            return;
+        }
+
+        System.out.print("Enter node value to delete: ");
+        int key = sc.nextInt();
+
+        Node temp = head;
+
+        while (temp != null && temp.data != key) {
+            temp = temp.next;
+        }
+
+        if (temp == null) {
+            System.out.println("Node not found");
+            return;
+        }
+
+        if (temp == head) {
+            deleteStart();
+            return;
+        }
+
+        if (temp.next == null) {
+            deleteEnd();
+            return;
+        }
+
+        temp.prev.next = temp.next;
+        temp.next.prev = temp.prev;
+    }
+
+    public void display() {
+        if (head == null) {
+            System.out.println("List is empty");
+            return;
+        }
 
         Node temp = head;
 
         while (temp != null) {
-            System.out.print(temp.data + " <-> ");
+            System.out.print(temp.data + " ");
             temp = temp.next;
         }
 
-        System.out.println("null");
+        System.out.println();
     }
+}
 
-    // Print Reverse
-    public void printReverse() {
-
-        Node temp = tail;
-
-        while (temp != null) {
-            System.out.print(temp.data + " <-> ");
-            temp = temp.prev;
-        }
-
-        System.out.println("null");
-    }
-
+public class Main {
     public static void main(String[] args) {
 
-        DoublyLL dll = new DoublyLL();
+        Scanner sc = new Scanner(System.in);
 
-        dll.addFirst(2);
-        dll.addFirst(1);
-        dll.addLast(3);
-        dll.addLast(4);
+        DLL l = new DLL();
 
-        System.out.println("Original DLL:");
-        dll.print();
+        int choice, d;
+        char ch;
 
-        System.out.println("Removed First = " + dll.removeFirst());
-        dll.print();
+        System.out.println("1. Insert at Start");
+        System.out.println("2. Insert at End");
+        System.out.println("3. Insert Between");
+        System.out.println("4. Delete from Start");
+        System.out.println("5. Delete from End");
+        System.out.println("6. Delete Between");
+        System.out.println("7. Display");
 
-        System.out.println("Removed Last = " + dll.removeLast());
-        dll.print();
+        do {
+            System.out.print("Enter your choice: ");
+            choice = sc.nextInt();
 
-        System.out.println("Reverse:");
-        dll.printReverse();
+            switch (choice) {
 
-        System.out.println("Size = " + dll.size);
+                case 1:
+                    System.out.print("Enter value: ");
+                    d = sc.nextInt();
+                    l.insertStart(d);
+                    break;
+
+                case 2:
+                    System.out.print("Enter value: ");
+                    d = sc.nextInt();
+                    l.insertEnd(d);
+                    break;
+
+                case 3:
+                    System.out.print("Enter value: ");
+                    d = sc.nextInt();
+                    l.insertBetween(d);
+                    break;
+
+                case 4:
+                    l.deleteStart();
+                    break;
+
+                case 5:
+                    l.deleteEnd();
+                    break;
+
+                case 6:
+                    l.deleteBetween();
+                    break;
+
+                case 7:
+                    l.display();
+                    break;
+
+                default:
+                    System.out.println("Invalid Choice");
+            }
+
+            System.out.print("Do you want to continue (Y/N)? ");
+            ch = sc.next().charAt(0);
+
+        } while (ch == 'Y' || ch == 'y');
+
+        sc.close();
     }
 }
